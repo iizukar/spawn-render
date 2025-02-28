@@ -1,17 +1,2 @@
 FROM iproyal/pawns-cli:latest
-
-# Switch to root to avoid permission issues
-USER root
-
-# Install Python (if the base image uses Debian/Ubuntu)
-RUN apt-get update && apt-get install -y python3
-
-# Copy and set executable permissions
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-# Explicitly expose port 8000 (required by Render)
-EXPOSE 8000
-
-# Entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
+CMD [ "-email=$EMAIL", "-password=$PASSWORD", "-device-name=$DEVICE_NAME", "-device-id=$DEVICE_ID", "-accept-tos" ]
