@@ -1,4 +1,4 @@
-FROM honeygain/honeygain
+FROM iproyal/pawns-cli:latest
 
 # Switch to root to avoid permission issues
 USER root
