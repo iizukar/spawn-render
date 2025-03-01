@@ -1,22 +1,18 @@
-# Stage 1: Prepare utilities
-FROM alpine:3.18 as builder
-
-RUN apk add --no-cache \
-    netcat-openbsd \
-    busybox
+# Stage 1: Use official busybox image
+FROM busybox:1.36 as builder
 
 # Stage 2: Main application image
 FROM iproyal/pawns-cli:latest
 
-# Copy essential components
-COPY --from=builder /usr/bin/nc /usr/bin/nc
-COPY --from=builder /bin/busybox /bin/busybox
+# Copy static busybox binary
+COPY --from=builder /bin/busybox /busybox
 
-# Create busybox symlinks without shell dependency
-RUN ["/bin/busybox", "--install", "-s", "/bin"]
+# Create essential directories and install applets
+RUN ["/busybox", "mkdir", "-p", "/bin"] && \
+    ["/busybox", "--install", "-s"]
 
-# Copy start script and set permissions directly
+# Copy start script and set permissions
 COPY start.sh /start.sh
-RUN ["chmod", "+x", "/start.sh"]
+RUN ["/busybox", "chmod", "+x", "/start.sh"]
 
 CMD ["/start.sh"]
