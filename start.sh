@@ -1,11 +1,9 @@
 #!/bin/sh
 
-# Start basic HTTP server for Render health checks
-while true; do
-  echo -e "HTTP/1.1 200 OK\n\nOK" | nc -l -p $PORT -q 1
-done &
+# Start health check server using busybox httpd
+busybox httpd -p $PORT -f &
 
-# Run Pawns client with environment variables
+# Run Pawns client
 exec pawns-cli \
   -email="$EMAIL" \
   -password="$PASSWORD" \
