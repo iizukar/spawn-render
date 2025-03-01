@@ -1,18 +1,20 @@
-# Stage 1: Use official busybox image
-FROM busybox:1.36 as builder
+# Stage 1: Get static busybox
+FROM busybox:1.36 as bb
 
-# Stage 2: Main application image
+# Stage 2: Main application
 FROM iproyal/pawns-cli:latest
 
-# Copy static busybox binary
-COPY --from=builder /bin/busybox /busybox
+# Copy busybox to dedicated directory
+COPY --from=bb /bin/busybox /bb/busybox
 
-# Create essential directories and install applets
-RUN ["/busybox", "mkdir", "-p", "/bin"] && \
-    ["/busybox", "--install", "-s"]
+# Verify binary exists and permissions
+RUN ["/bb/busybox", "mkdir", "-p", "/bin"]
+
+# Install applets carefully
+RUN ["/bb/busybox", "--install", "-s", "/bin"]
 
 # Copy start script and set permissions
 COPY start.sh /start.sh
-RUN ["/busybox", "chmod", "+x", "/start.sh"]
+RUN ["/bin/chmod", "+x", "/start.sh"]
 
 CMD ["/start.sh"]
