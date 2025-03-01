@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Start health check server
-busybox httpd -p $PORT -f -v &
+/busybox httpd -p $PORT -f -v &
 
 # Run Pawns client
 exec pawns-cli \
